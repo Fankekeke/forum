@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.SensitiveInfoMapper">
+
+    <!-- 分页查询敏感词列表 -->
+    <select id="sensitiveByPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        id,
+        key_name AS keyName,
+        delete_flag AS deleteFlag,
+        create_date AS createDate
+        FROM
+        sensitive_info
+        WHERE
+        1 = 1
+        <if test="sensitiveInfo.keyName != null and sensitiveInfo.keyName != ''">
+            AND key_name LIKE CONCAT('%',#{sensitiveInfo.keyName},'%')
+        </if>
+        <if test="sensitiveInfo.deleteFlag != null">
+            AND delete_flag = #{sensitiveInfo.deleteFlag}
+        </if>
+    </select>
+</mapper>

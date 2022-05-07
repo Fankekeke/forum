@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.CollectInfoMapper">
+
+    <!-- 获取收藏贴子列表 -->
+    <select id="collectInfoByPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        ci.id,
+        ci.user_id AS userId,
+        ci.post_id AS postId,
+        ci.create_date AS createDate,
+        pi.title,
+        pi.content,
+        pi.images,
+        pi.pageviews,
+        tu.USERNAME AS username,
+        tu.AVATAR AS avatar
+        FROM
+        collect_info ci
+        LEFT JOIN post_info pi ON ( pi.id = ci.post_id )
+        LEFT JOIN t_user tu ON ( tu.USER_ID = ci.user_id )
+        WHERE
+        ci.delete_flag = 0
+        <if test="collectInfo.title != null and collectInfo.title != ''">
+            AND pi.title LIKE CONCAT('%',#{collectInfo.title},'%')
+        </if>
+        <if test="collectInfo.username != null and collectInfo.username != ''">
+            AND tu.USERNAME LIKE CONCAT('%',#{collectInfo.username},'%')
+        </if>
+        <if test="collectInfo.userId != null">
+            AND ci.user_id = #{collectInfo.userId}
+        </if>
+        ORDER BY ci.create_date DESC
+    </select>
+
+    <!-- 获取收藏贴子列表 -->
+    <select id="collectInfoByUser" resultType="java.util.LinkedHashMap">
+        SELECT
+        ci.id,
+        ci.user_id AS userId,
+        ci.post_id AS postId,
+        ci.create_date AS createDate,
+        pi.title,
+        pi.content,
+        pi.images,
+        pi.pageviews,
+        tu.USERNAME AS username,
+        tu.AVATAR AS avatar
+        FROM
+        collect_info ci
+        LEFT JOIN post_info pi ON ( pi.id = ci.post_id )
+        LEFT JOIN t_user tu ON ( tu.USER_ID = ci.user_id )
+        WHERE ci.user_id = #{userId} AND ci.delete_flag = 0
+    </select>
+</mapper>

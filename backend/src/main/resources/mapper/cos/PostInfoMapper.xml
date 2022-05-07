@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.PostInfoMapper">
+
+    <!-- 分页获取帖子信息 -->
+    <select id="postInfoByPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.id,
+        pi.title,
+        pi.content,
+        pi.images,
+        pi.user_id AS userId,
+        pi.create_date AS createDate,
+        pi.pageviews,
+        pi.tag_ids AS tagIds,
+        pi.delete_flag AS deleteFlag,
+        tu.USERNAME AS username,
+        tu.AVATAR AS avatar,
+        IFNULL(SUM(ci.post_id), 0) AS collect,
+        IFNULL(SUM(ri.post_id), 0) AS reply
+        FROM
+        post_info pi
+        LEFT JOIN t_user tu ON ( tu.USER_ID = pi.user_id )
+        LEFT JOIN collect_info ci ON ( ci.post_id = pi.id ) AND ci.delete_flag = 0
+        LEFT JOIN reply_info ri ON ( ri.post_id = pi.id ) AND ri.delete_flag = 0
+        WHERE
+        1 = 1
+        <if test="postInfo.title != null and postInfo.title != ''">
+            AND pi.title LIKE CONCAT('%',#{postInfo.title},'%')
+        </if>
+        <if test="postInfo.username != null and postInfo.username != ''">
+            AND tu.USERNAME LIKE CONCAT('%',#{postInfo.username},'%')
+        </if>
+        <if test="postInfo.tagId != null">
+            AND FIND_IN_SET(#{ postInfo.tagId }, pi.tag_ids)
+        </if>
+        <if test="postInfo.userId != null">
+            AND pi.user_id = #{postInfo.userId}
+        </if>
+        GROUP BY pi.id
+        ORDER BY pi.create_date DESC
+    </select>
+
+    <!-- 获取模块下的贴子 -->
+    <select id="getPostByTag" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.id,
+        pi.title,
+        pi.content,
+        pi.images,
+        pi.user_id AS userId,
+        pi.create_date AS createDate,
+        pi.pageviews,
+        pi.tag_ids AS tagIds,
+        pi.delete_flag AS deleteFlag,
+        tu.USERNAME AS username,
+        tu.AVATAR AS avatar,
+        IFNULL(COUNT(distinct(ci.id)), 0) AS collect,
+        IFNULL(COUNT(ri.id), 0) AS reply
+        FROM
+        post_info pi
+        LEFT JOIN t_user tu ON ( tu.USER_ID = pi.user_id )
+        LEFT JOIN collect_info ci ON ( ci.post_id = pi.id ) AND ci.delete_flag = 0
+        LEFT JOIN reply_info ri ON ( ri.post_id = pi.id ) AND ri.delete_flag = 0
+        WHERE
+        pi.delete_flag = 0
+        AND FIND_IN_SET(#{ tagId }, pi.tag_ids)
+        GROUP BY pi.id
+        ORDER BY pi.create_date DESC
+    </select>
+
+    <select id="postDetail" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.id,
+        pi.title,
+        pi.content,
+        pi.images,
+        pi.user_id AS userId,
+        pi.create_date AS createDate,
+        pi.pageviews,
+        pi.tag_ids AS tagIds,
+        pi.delete_flag AS deleteFlag,
+        tu.USERNAME AS username,
+        tu.AVATAR AS avatar,
+        IFNULL(COUNT(distinct(ci.id)), 0) AS collect,
+        IFNULL(COUNT(ri.id), 0) AS reply
+        FROM
+        post_info pi
+        LEFT JOIN t_user tu ON ( tu.USER_ID = pi.user_id )
+        LEFT JOIN collect_info ci ON ( ci.post_id = pi.id ) AND ci.delete_flag = 0
+        LEFT JOIN reply_info ri ON ( ri.post_id = pi.id ) AND ri.delete_flag = 0
+        WHERE
+        pi.id = #{ postId }
+    </select>
+
+    <!-- 模糊查询帖子信息 -->
+    <select id="postByKey" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.id,
+        pi.title,
+        pi.content,
+        pi.images,
+        pi.user_id AS userId,
+        pi.create_date AS createDate,
+        pi.pageviews,
+        pi.tag_ids AS tagIds,
+        pi.delete_flag AS deleteFlag,
+        tu.USERNAME AS username,
+        tu.AVATAR AS avatar,
+        IFNULL(COUNT(distinct(ci.id)), 0) AS collect,
+        IFNULL(COUNT(ri.id), 0) AS reply
+        FROM
+        post_info pi
+        LEFT JOIN t_user tu ON ( tu.USER_ID = pi.user_id )
+        LEFT JOIN collect_info ci ON ( ci.post_id = pi.id ) AND ci.delete_flag = 0
+        LEFT JOIN reply_info ri ON ( ri.post_id = pi.id ) AND ri.delete_flag = 0
+        WHERE
+        pi.delete_flag = 0
+        AND pi.title LIKE CONCAT('%',#{key},'%')
+        GROUP BY pi.id
+        ORDER BY pi.create_date DESC
+    </select>
+
+    <!-- 推荐贴子 -->
+    <select id="recommend" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.id,
+        pi.title,
+        pi.content,
+        pi.images,
+        pi.user_id AS userId,
+        pi.create_date AS createDate,
+        pi.pageviews,
+        pi.tag_ids AS tagIds,
+        pi.delete_flag AS deleteFlag,
+        tu.USERNAME AS username,
+        tu.AVATAR AS avatar,
+        IFNULL( COUNT( DISTINCT ( ci.id )), 0 ) AS collect,
+        IFNULL( COUNT( ri.id ), 0 ) AS reply
+        FROM
+        post_info pi
+        LEFT JOIN t_user tu ON ( tu.USER_ID = pi.user_id )
+        LEFT JOIN collect_info ci ON ( ci.post_id = pi.id )
+        AND ci.delete_flag = 0
+        LEFT JOIN reply_info ri ON ( ri.post_id = pi.id )
+        AND ri.delete_flag = 0
+        WHERE
+        1 = 1
+        <if test="tagId != null and tagId != -1">
+            AND FIND_IN_SET( #{ tagId }, pi.tag_ids )
+            <if test="collectUserIds != null and collectUserIds != ''">
+                OR FIND_IN_SET( tu.USER_ID, #{ collectUserIds } )
+            </if>
+        </if>
+        AND pi.delete_flag = 0
+        GROUP BY
+        pi.id
+        ORDER BY
+        pi.create_date DESC
+    </select>
+</mapper>
