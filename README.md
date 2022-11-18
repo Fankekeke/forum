@@ -1,4 +1,4 @@
-### 基于Spring学习论坛系统
+### 基于SpringBoot学习论坛系统
 
 #### 安装环境
 
@@ -67,7 +67,7 @@ test
 
 #### 演示视频
 
-[项目视频：基于Spring学习论坛系统](https://www.bilibili.com/video/BV1RB4y1174A/)
+[项目视频：基于SpringBoot学习论坛系统](https://www.bilibili.com/video/BV1RB4y1174A/)
 
 ## 获取方式
 
