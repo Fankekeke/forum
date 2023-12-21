@@ -1,4 +1,4 @@
-### 基于SpringBoot学习论坛系统
+### 基于SpringBoot + Vue学习论坛系统
 
 #### 安装环境
 
