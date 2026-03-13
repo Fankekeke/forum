@@ -1,6 +1,6 @@
 ### 基于SpringBoot + Vue学习论坛系统
 
-###### 知识问答社区、在线研修平台、学术交流论坛、协同学习系统、教学互动空间、精品资源共享、笔记打卡社区、学霸经验分享
+###### 知识问答社区、在线研修平台、学术交流论坛、精品资源共享、笔记打卡社区、学霸经验分享
 
 ##### 基础入口与内容安全
 ###### 用户注册登录： 提供便捷的实名账号体系，保障用户学习数据的持久存储与跨设备访问的安全合规。
@@ -142,6 +142,7 @@ WeChat: `Storm_Berserker`
 More info: [悲伤的橘子树](https://berserker287.github.io/)
 
 <p><img align="center" src="https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/%E5%90%88%E4%BD%9C%E7%89%A9%E6%96%99%E6%A0%B7%E5%BC%8F%20(3).png" alt="fankekeke" /></p>
+
 
 
 
